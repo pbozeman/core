@@ -20,7 +20,8 @@ from homeassistant.const import (
 from homeassistant.helpers.entity import Entity
 from homeassistant.helpers.typing import HomeAssistantType
 
-from . import DATA_CANARY, CanaryData
+from . import CanaryData
+from .const import DATA_CANARY, DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
 
