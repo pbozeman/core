@@ -11,7 +11,7 @@ from homeassistant.const import CONF_PASSWORD, CONF_USERNAME
 from homeassistant.setup import async_setup_component
 from tests.common import MockConfigEntry
 
-from . import ENTRY_CONFIG, YAML_CONFIG, init_integration
+from . import YAML_CONFIG, init_integration
 
 from tests.async_mock import patch
 
@@ -36,6 +36,7 @@ async def test_unload_entry(hass, canary):
     """Test successful unload of entry."""
     entry = await init_integration(hass)
 
+    assert entry
     assert len(hass.config_entries.async_entries(DOMAIN)) == 1
     assert entry.state == ENTRY_STATE_LOADED
 
@@ -48,12 +49,8 @@ async def test_unload_entry(hass, canary):
 
 async def test_async_setup_raises_entry_not_ready(hass, canary):
     """Test that it throws ConfigEntryNotReady when exception occurs during setup."""
-    config_entry = MockConfigEntry(domain=DOMAIN, data=ENTRY_CONFIG)
-    config_entry.add_to_hass(hass)
-
     canary.side_effect = ConnectTimeout()
 
-    await hass.config_entries.async_setup(config_entry.entry_id)
-    await hass.async_block_till_done()
-
-    assert config_entry.state == ENTRY_STATE_SETUP_RETRY
+    entry = await init_integration(hass)
+    assert entry
+    assert entry.state == ENTRY_STATE_SETUP_RETRY
