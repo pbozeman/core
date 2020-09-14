@@ -43,7 +43,7 @@ async def test_alarm_control_panel(hass, canary) -> None:
 
     config = {DOMAIN: {"username": "test-username", "password": "test-password"}}
     with patch(
-        "homeassistant.components.canary.CANARY_COMPONENTS", ["alarm_control_panel"]
+        "homeassistant.components.canary.PLATFORMS", ["alarm_control_panel"]
     ):
         assert await async_setup_component(hass, DOMAIN, config)
         await hass.async_block_till_done()
