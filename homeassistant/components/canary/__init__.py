@@ -3,6 +3,7 @@ from datetime import timedelta
 import logging
 
 from canary.api import Api
+import asyncio
 from requests import ConnectTimeout, HTTPError
 import voluptuous as vol
 
@@ -60,7 +61,6 @@ async def async_setup(hass: HomeAssistantType, config: dict) -> bool:
         )
     else:
         ffmpeg_arguments = DEFAULT_FFMPEG_ARGUMENTS
-       
 
     if DOMAIN in config:
         config[DOMAIN][CONF_FFMPEG_ARGUMENTS] = ffmpeg_arguments
@@ -87,7 +87,7 @@ async def async_setup_entry(hass: HomeAssistantType, entry: ConfigEntry) -> bool
         hass.config_entries.async_update_entry(entry, options=options)
 
     try:
-        canary_data = CanaryData(username, password, timeout)
+        canary_data = CanaryData(entry.data[CONF_USERNAME], entry.data[CONF_PASSWORD], entry.data[CONF_TIMEOUT])
     except ConnectTimeout as error:
         raise ConfigEntryNotReady from error
     except HTTPError as error:

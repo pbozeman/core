@@ -1,6 +1,6 @@
 """Support for Canary alarm."""
 import logging
-from typing import Callable, List, Optional
+from typing import Callable, List
 
 from canary.api import LOCATION_MODE_AWAY, LOCATION_MODE_HOME, LOCATION_MODE_NIGHT
 
@@ -33,7 +33,6 @@ async def async_setup_entry(
 ) -> None:
     """Set up Canary alarm control panels based on a config entry."""
     data: CanaryData = hass.data[DOMAIN][entry.entry_id][DATA_CANARY]
-    
     alarms = [CanaryAlarm(data, location.location_id) for location in data.locations]
 
     async_add_entities(alarms, True)

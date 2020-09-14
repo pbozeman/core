@@ -1,5 +1,5 @@
 """Support for Canary sensors."""
-from typing import Callable, List, Optional
+from typing import Callable, List
 
 from canary.api import SensorType
 

@@ -12,6 +12,10 @@ from homeassistant.components.ffmpeg import DATA_FFMPEG
 from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers.aiohttp_client import async_aiohttp_proxy_stream
 from homeassistant.util import Throttle
+from homeassistant.helpers.entity import Entity
+from homeassistant.helpers.typing import HomeAssistantType
+
+from typing import Callable, List, Optional
 
 from . import CanaryData
 from .const import (
