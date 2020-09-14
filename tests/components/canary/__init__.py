@@ -3,6 +3,36 @@ from unittest.mock import MagicMock, PropertyMock
 
 from canary.api import SensorType
 
+from homeassistant.const import CONF_PASSWORD, CONF_USERNAME
+from homeassistant.helpers.typing import HomeAssistantType
+from tests.common import MockConfigEntry
+
+ENTRY_CONFIG = {
+    CONF_PASSWORD: "test-password",
+    CONF_USERNAME: "test-username",
+}
+
+YAML_CONFIG = {
+    CONF_PASSWORD: "test-password",
+    CONF_USERNAME: "test-username",
+}
+
+
+async def init_integration(
+    hass: HomeAssistantType,
+    *,
+    skip_entry_setup: bool = False,
+) -> MockConfigEntry:
+    """Set up the Canary integration in Home Assistant."""
+    entry = MockConfigEntry(domain=DOMAIN, data=ENTRY_CONFIG)
+    entry.add_to_hass(hass)
+
+    if not skip_entry_setup:
+        await hass.config_entries.async_setup(entry.entry_id)
+        await hass.async_block_till_done()
+
+    return entry
+
 
 def mock_device(device_id, name, is_online=True, device_type_name=None):
     """Mock Canary Device class."""
