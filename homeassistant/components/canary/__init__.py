@@ -99,7 +99,7 @@ async def async_setup_entry(hass: HomeAssistantType, entry: ConfigEntry) -> bool
     hass.data[DOMAIN][entry.entry_id] = {
         DATA_CANARY: canary_data,
         DATA_UNDO_UPDATE_LISTENER: undo_listener,
-    ]
+    }
 
     for component in PLATFORMS:
         hass.async_create_task(
