@@ -13,12 +13,12 @@ from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers.aiohttp_client import async_aiohttp_proxy_stream
 from homeassistant.util import Throttle
 
-from . import DATA_CANARY, DEFAULT_TIMEOUT
+from . import DATA_CANARY
+from .const import DEFAULT_FFMPEG_ARGUMENTS, DEFAULT_TIMEOUT
 
 _LOGGER = logging.getLogger(__name__)
 
 CONF_FFMPEG_ARGUMENTS = "ffmpeg_arguments"
-DEFAULT_ARGUMENTS = "-pred 1"
 
 MIN_TIME_BETWEEN_SESSION_RENEW = timedelta(seconds=90)
 
@@ -27,29 +27,32 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
 )
 
 
-def setup_platform(hass, config, add_entities, discovery_info=None):
-    """Set up the Canary sensors."""
-    if discovery_info is not None:
-        return
+async def async_setup_entry(
+    hass: HomeAssistantType,
+    entry: ConfigEntry,
+    async_add_entities: Callable[[List[Entity], bool], None],
+) -> None:
+    """Set up Canary sensors based on a config entry."""
+    data: CanaryData = hass.data[DOMAIN][entry.entry_id][DATA_CANARY]
 
-    data = hass.data[DATA_CANARY]
-    devices = []
+    ffmpeg_arguments = DEFAULT_FFMPEG_ARGUMENTS
+    cameras = []
 
     for location in data.locations:
         for device in location.devices:
             if device.is_online:
-                devices.append(
+                cameras.append(
                     CanaryCamera(
                         hass,
                         data,
                         location,
                         device,
                         DEFAULT_TIMEOUT,
-                        config[CONF_FFMPEG_ARGUMENTS],
+                        ffmpeg_arguments,
                     )
                 )
 
-    add_entities(devices, True)
+    async_add_entities(cameras, True)
 
 
 class CanaryCamera(Camera):
