@@ -14,11 +14,15 @@ import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.typing import HomeAssistantType
 from homeassistant.util import Throttle
 
-from .const import DEFAULT_TIMEOUT, DOMAIN
+from .const import (
+    DATA_CANARY,
+    DATA_UNDO_UPDATE_LISTENER,
+    DEFAULT_TIMEOUT,
+    DOMAIN,
+L
 
 _LOGGER = logging.getLogger(__name__)
 
-DATA_CANARY = "canary"
 MIN_TIME_BETWEEN_UPDATES = timedelta(seconds=30)
 
 CONFIG_SCHEMA = vol.Schema(
@@ -44,7 +48,20 @@ async def async_setup(hass: HomeAssistantType, config: dict) -> bool:
     if hass.config_entries.async_entries(DOMAIN):
         return True
 
+    if (
+        CAMERA_DOMAIN in config
+        and DOMAIN in config[CAMERA_DOMAIN]
+    ):
+        ffmpeg_arguments = config[CAMERA_DOMAIN][DOMAIN].get(
+            CONF_FFMPEG_ARGUMENTS, DEFAULT_FFMPEG_ARGUMENTS
+        )
+    else:
+        ffmpeg_arguments = DEFAULT_FFMPEG_ARGUMENTS
+       
+
     if DOMAIN in config:
+        config[DOMAIN][CONF_FFMPEG_ARGUMENTS] = ffmpeg_arguments
+
         hass.async_create_task(
             hass.config_entries.flow.async_init(
                 DOMAIN,
@@ -52,12 +69,20 @@ async def async_setup(hass: HomeAssistantType, config: dict) -> bool:
                 data=config[DOMAIN],
             )
         )
-
+ 
     return True
 
 
 async def async_setup_entry(hass: HomeAssistantType, entry: ConfigEntry) -> bool:
     """Set up Canary from a config entry."""
+    if not entry.options:
+        options = {
+            CONF_FFMPEG_ARGUMENTS: entry.data.get(
+                CONF_FFMPEG_ARGUMENTS, DEFAULT_FFMPEG_ARGUMENTS
+            ),
+        }
+        hass.config_entries.async_update_entry(entry, options=options)
+
     try:
         canary_data = CanaryData(username, password, timeout)
     except ConnectTimeout as error:
@@ -66,8 +91,11 @@ async def async_setup_entry(hass: HomeAssistantType, entry: ConfigEntry) -> bool
         _LOGGER.error("Unable to connect to Canary service: %s", str(error))
         return False
 
+    undo_listener = entry.add_update_listener(_async_update_listener)
+
     hass.data[DOMAIN][entry.entry_id] = {
         DATA_CANARY: canary_data,
+        DATA_UNDO_UPDATE_LISTENER: undo_listener,
     ]
 
     for component in PLATFORMS:
@@ -90,9 +118,15 @@ async def async_unload_entry(hass: HomeAssistantType, entry: ConfigEntry) -> boo
     )
 
     if unload_ok:
+        hass.data[DOMAIN][entry.entry_id][DATA_UNDO_UPDATE_LISTENER]()
         hass.data[DOMAIN].pop(entry.entry_id)
 
     return unload_ok
+
+
+async def _async_update_listener(hass: HomeAssistantType, entry: ConfigEntry) -> None:
+    """Handle options update."""
+    await hass.config_entries.async_reload(entry.entry_id)
 
 
 class CanaryData:
