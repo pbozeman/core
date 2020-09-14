@@ -13,8 +13,13 @@ from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers.aiohttp_client import async_aiohttp_proxy_stream
 from homeassistant.util import Throttle
 
-from . import DATA_CANARY
-from .const import DEFAULT_FFMPEG_ARGUMENTS, DEFAULT_TIMEOUT, DOMAIN
+from . import CanaryData
+from .const import (
+    DATA_CANARY,
+    DEFAULT_FFMPEG_ARGUMENTS,
+    DEFAULT_TIMEOUT,
+    DOMAIN,
+)
 
 _LOGGER = logging.getLogger(__name__)
 
