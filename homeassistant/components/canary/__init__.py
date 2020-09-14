@@ -6,6 +6,7 @@ from canary.api import Api
 from requests import ConnectTimeout, HTTPError
 import voluptuous as vol
 
+from homeassistant.components.camera.const import DOMAIN as CAMERA_DOMAIN
 from homeassistant.config_entries import SOURCE_IMPORT, ConfigEntry
 from homeassistant.const import CONF_PASSWORD, CONF_TIMEOUT, CONF_USERNAME
 from homeassistant.exceptions import ConfigEntryNotReady
@@ -15,8 +16,10 @@ from homeassistant.helpers.typing import HomeAssistantType
 from homeassistant.util import Throttle
 
 from .const import (
+    CONF_FFMPEG_ARGUMENTS,
     DATA_CANARY,
     DATA_UNDO_UPDATE_LISTENER,
+    DEFAULT_FFMPEG_ARGUMENTS,
     DEFAULT_TIMEOUT,
     DOMAIN,
 L
