@@ -5,12 +5,17 @@ from typing import Any, Dict, Optional
 
 import voluptuous as vol
 
-from homeassistant.config_entries import CONN_CLASS_CLOUD_POLL, ConfigFlow
+from homeassistant.config_entries import CONN_CLASS_CLOUD_POLL, ConfigFlow, OptionsFlow
 from homeassistant.const import CONF_PASSWORD, CONF_TIMEOUT, CONF_USERNAME
+from homeassistant.core import callback
 from homeassistant.helpers.typing import ConfigType, HomeAssistantType
 
 from . import Api
-from .const import DEFAULT_TIMEOUT
+from .const import (
+    CONF_FFMPEG_ARGUMENTS,
+    DEFAULT_FFMPEG_ARGUMENTS,
+    DEFAULT_TIMEOUT,
+)
 from .const import DOMAIN  # pylint: disable=unused-import
 
 _LOGGER = logging.getLogger(__name__)
@@ -36,6 +41,12 @@ class CanaryConfigFlow(ConfigFlow, domain=DOMAIN):
 
     VERSION = 1
     CONNECTION_CLASS = CONN_CLASS_CLOUD_POLL
+
+    @staticmethod
+    @callback
+    def async_get_options_flow(config_entry):
+        """Get the options flow for this handler."""
+        return CanaryOptionsFlowHandler(config_entry)
 
     async def async_step_import(
         self, user_input: Optional[ConfigType] = None
@@ -86,3 +97,27 @@ class CanaryConfigFlow(ConfigFlow, domain=DOMAIN):
             data_schema=vol.Schema(data_schema),
             errors=errors or {},
         )
+
+
+class CanaryOptionsFlowHandler(OptionsFlow):
+    """Handle Canary client options."""
+
+    def __init__(self, config_entry):
+        """Initialize options flow."""
+        self.config_entry = config_entry
+
+    async def async_step_init(self, user_input: Optional[ConfigType] = None):
+        """Manage Canary options."""
+        if user_input is not None:
+            return self.async_create_entry(title="", data=user_input)
+
+        options = {
+            vol.Optional(
+                CONF_FFMPEG_ARGUMENTS,
+                default=self.config_entry.options.get(
+                    CONF_FFMPEG_ARGUMENTS, DEFAULT_FFMPEG_ARGUMENTS
+                ),
+            ): str,
+        }
+
+        return self.async_show_form(step_id="init", data_schema=vol.Schema(options))
