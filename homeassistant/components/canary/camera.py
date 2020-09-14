@@ -15,6 +15,7 @@ from homeassistant.util import Throttle
 
 from . import CanaryData
 from .const import (
+    CONF_FFMPEG_ARGUMENTS,
     DATA_CANARY,
     DEFAULT_FFMPEG_ARGUMENTS,
     DEFAULT_TIMEOUT,
@@ -34,7 +35,9 @@ async def async_setup_entry(
     """Set up Canary sensors based on a config entry."""
     data: CanaryData = hass.data[DOMAIN][entry.entry_id][DATA_CANARY]
 
-    ffmpeg_arguments = DEFAULT_FFMPEG_ARGUMENTS
+    ffmpeg_arguments = entry.options.get(
+        CONF_FFMPEG_ARGUMENTS, DEFAULT_FFMPEG_ARGUMENTS
+    )
     cameras = []
 
     for location in data.locations:
