@@ -1,13 +1,13 @@
 """The tests for the Canary component."""
 from requests import ConnectTimeout
 
-from homeassistant.components.canary import DOMAIN
+from homeassistant.components.canary.const import DEFAULT_TIMEOUT, DOMAIN
 from homeassistant.config_entries import (
     ENTRY_STATE_LOADED,
     ENTRY_STATE_NOT_LOADED,
     ENTRY_STATE_SETUP_RETRY,
 )
-from homeassistant.const import CONF_PASSWORD, CONF_USERNAME
+from homeassistant.const import CONF_PASSWORD, CONF_TIMEOUT, CONF_USERNAME
 from homeassistant.setup import async_setup_component
 from tests.common import MockConfigEntry
 
@@ -30,6 +30,7 @@ async def test_import_from_yaml(hass, canary) -> None:
 
     assert entries[0].data[CONF_USERNAME] == "test-username"
     assert entries[0].data[CONF_PASSWORD] == "test-password"
+    assert entries[0].data[CONF_TIMEOUT] == DEFAULT_TIMEOUT
 
 
 async def test_unload_entry(hass, canary):
