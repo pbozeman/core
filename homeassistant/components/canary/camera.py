@@ -14,11 +14,7 @@ from homeassistant.helpers.aiohttp_client import async_aiohttp_proxy_stream
 from homeassistant.util import Throttle
 
 from . import DATA_CANARY
-from .const import (
-    CONF_FFMPEG_ARGUMENTS,
-    DEFAULT_FFMPEG_ARGUMENTS,
-    DEFAULT_TIMEOUT,
-)
+from .const import DEFAULT_FFMPEG_ARGUMENTS, DEFAULT_TIMEOUT, DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
 
