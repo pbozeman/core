@@ -22,7 +22,7 @@ from .const import (
     DEFAULT_FFMPEG_ARGUMENTS,
     DEFAULT_TIMEOUT,
     DOMAIN,
-L
+)
 
 _LOGGER = logging.getLogger(__name__)
 
