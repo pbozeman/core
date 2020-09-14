@@ -9,13 +9,13 @@ import voluptuous as vol
 
 from homeassistant.components.camera import PLATFORM_SCHEMA, Camera
 from homeassistant.components.ffmpeg import DATA_FFMPEG
-from homeassistant.helpers import config_validation as cv
+from homeassistant.config_entries import ConfigEntry
 from homeassistant.helpers.aiohttp_client import async_aiohttp_proxy_stream
 from homeassistant.util import Throttle
 from homeassistant.helpers.entity import Entity
 from homeassistant.helpers.typing import HomeAssistantType
 
-from typing import Callable, List, Optional
+from typing import Callable, List
 
 from . import CanaryData
 from .const import (

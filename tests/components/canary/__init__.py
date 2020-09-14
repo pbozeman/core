@@ -4,6 +4,7 @@ from unittest.mock import MagicMock, PropertyMock
 
 from canary.api import SensorType
 
+from homeassistant.components.canary.const import DOMAIN
 from homeassistant.const import CONF_PASSWORD, CONF_TIMEOUT, CONF_USERNAME
 from homeassistant.helpers.typing import HomeAssistantType
 from tests.common import MockConfigEntry

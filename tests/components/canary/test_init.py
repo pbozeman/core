@@ -9,7 +9,6 @@ from homeassistant.config_entries import (
 )
 from homeassistant.const import CONF_PASSWORD, CONF_TIMEOUT, CONF_USERNAME
 from homeassistant.setup import async_setup_component
-from tests.common import MockConfigEntry
 
 from . import YAML_CONFIG, init_integration
 

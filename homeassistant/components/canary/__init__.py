@@ -11,7 +11,6 @@ from homeassistant.components.camera.const import DOMAIN as CAMERA_DOMAIN
 from homeassistant.config_entries import SOURCE_IMPORT, ConfigEntry
 from homeassistant.const import CONF_PASSWORD, CONF_TIMEOUT, CONF_USERNAME
 from homeassistant.exceptions import ConfigEntryNotReady
-from homeassistant.helpers import discovery
 import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.typing import HomeAssistantType
 from homeassistant.util import Throttle
@@ -72,7 +71,6 @@ async def async_setup(hass: HomeAssistantType, config: dict) -> bool:
                 data=config[DOMAIN],
             )
         )
- 
     return True
 
 
